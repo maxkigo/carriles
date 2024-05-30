@@ -1,6 +1,5 @@
 streamlit
-python >= 3.12
+python >= 3.11
 google-cloud-bigquery
 google-auth
 google-auth-oauthlib
-google-auth-httplib2
