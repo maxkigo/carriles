@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from google.cloud import bigquery
 from google.oauth2 import service_account
+import base64
 
 # Create API client for BigQuery.
 credentials = service_account.Credentials.from_service_account_info(
@@ -133,3 +134,18 @@ st.write(df_carriles)
 
 st.title('Performance de Carriles ED - 2024')
 st.write(df_carriles_ed)
+
+@st.cache_data
+def get_binary_file_downloader_html(bin_file, file_label='File'):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    bin_str = base64.b64encode(data).decode()
+    href = f'<a href="data:application/octet-stream;base64,{bin_str}" download="{bin_file}">{file_label}</a>'
+    return href
+
+if st.button('Descargar tabla como Excel'):
+        with pd.ExcelWriter('carriles_kigo.xlsx', engine='xlsxwriter') as writer:
+            df_carriles.to_excel(writer, index=False, sheet_name="CA")
+            df_carriles_ed.to_excel(writer, index=False, sheet_name="ED")
+        st.success('Tabla descargada exitosamente!')
+        st.markdown(get_binary_file_downloader_html('carriles_kigo.xlsx', 'Descargar tabla como Excel'), unsafe_allow_html=True)
