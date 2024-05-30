@@ -1,5 +1,7 @@
+pandas
 streamlit
-python >= 3.11
+numpy
 google-cloud-bigquery
-google-auth
-google-auth-oauthlib
+openpyxl
+xlrd
+python-dotenv
