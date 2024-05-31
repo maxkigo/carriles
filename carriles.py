@@ -34,43 +34,68 @@ st.cache_data(ttl=3600)
 def get_carriles_month_ca(client):
     try:
         carriles_lecturas = """
-        SELECT
-        QR,
-        name,
-        alias,
-        SUM(CASE WHEN mes = 1 THEN lecturas ELSE 0 END) AS lecturas_january,
-        SUM(CASE WHEN mes = 2 THEN lecturas ELSE 0 END) AS lecturas_february,
-        SUM(CASE WHEN mes = 3 THEN lecturas ELSE 0 END) AS lecturas_march,
-        SUM(CASE WHEN mes = 4 THEN lecturas ELSE 0 END) AS lecturas_april,
-        SUM(CASE WHEN mes = 5 THEN lecturas ELSE 0 END) AS lecturas_may,
-        SUM(CASE WHEN mes = 6 THEN lecturas ELSE 0 END) AS lecturas_june,
-        SUM(CASE WHEN mes = 7 THEN lecturas ELSE 0 END) AS lecturas_july,
-        SUM(CASE WHEN mes = 8 THEN lecturas ELSE 0 END) AS lecturas_august,
-        SUM(CASE WHEN mes = 9 THEN lecturas ELSE 0 END) AS lecturas_september,
-        SUM(CASE WHEN mes = 10 THEN lecturas ELSE 0 END) AS lecturas_october,
-        SUM(CASE WHEN mes = 11 THEN lecturas ELSE 0 END) AS lecturas_november,
-        SUM(CASE WHEN mes = 12 THEN lecturas ELSE 0 END) AS lecturas_december
-        FROM (
-        SELECT
-            EXTRACT(MONTH FROM date) AS mes,
-            L.QR,
-            R.name,
-            R.alias,
-            COUNT(L.function_) AS lecturas
-        FROM
-            `parkimovil-app`.geosek_raspis.log_sek AS L
-        JOIN
-            `parkimovil-app`.geosek_raspis.raspis AS R
-            ON L.QR = R.qr
-        WHERE
-            date >= '2024-01-01 00:00:00' AND R.api_active = 1
-        GROUP BY
-            EXTRACT(MONTH FROM date), L.QR, R.name, R.alias
-        ) AS subquery
-        GROUP BY
-            QR, name, alias
-        ORDER BY
-            QR"""
+        SELECT 
+    QR,
+    name,
+    SUM(CASE WHEN mes = 1 THEN lecturas ELSE 0 END) AS lecturas_january,
+    SUM(CASE WHEN mes = 1 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_january,
+    SUM(CASE WHEN mes = 1 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_january,
+    SUM(CASE WHEN mes = 2 THEN lecturas ELSE 0 END) AS lecturas_february,
+    SUM(CASE WHEN mes = 2 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_february,
+    SUM(CASE WHEN mes = 2 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_february,
+    SUM(CASE WHEN mes = 3 THEN lecturas ELSE 0 END) AS lecturas_march,
+    SUM(CASE WHEN mes = 3 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_march,
+    SUM(CASE WHEN mes = 3 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_march,
+    SUM(CASE WHEN mes = 4 THEN lecturas ELSE 0 END) AS lecturas_april,
+    SUM(CASE WHEN mes = 4 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_april,
+    SUM(CASE WHEN mes = 4 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_april,
+    SUM(CASE WHEN mes = 5 THEN lecturas ELSE 0 END) AS lecturas_may,
+    SUM(CASE WHEN mes = 5 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_may,
+    SUM(CASE WHEN mes = 5 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_may,
+    SUM(CASE WHEN mes = 6 THEN lecturas ELSE 0 END) AS lecturas_june,
+    SUM(CASE WHEN mes = 6 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_june,
+    SUM(CASE WHEN mes = 6 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_june,
+    SUM(CASE WHEN mes = 7 THEN lecturas ELSE 0 END) AS lecturas_july,
+    SUM(CASE WHEN mes = 7 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_july,
+    SUM(CASE WHEN mes = 7 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_july,
+    SUM(CASE WHEN mes = 8 THEN lecturas ELSE 0 END) AS lecturas_august,
+    SUM(CASE WHEN mes = 8 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_august,
+    SUM(CASE WHEN mes = 8 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_august,
+    SUM(CASE WHEN mes = 9 THEN lecturas ELSE 0 END) AS lecturas_september,
+    SUM(CASE WHEN mes = 9 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_september,
+    SUM(CASE WHEN mes = 9 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_september,
+    SUM(CASE WHEN mes = 10 THEN lecturas ELSE 0 END) AS lecturas_october,
+    SUM(CASE WHEN mes = 10 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_october,
+    SUM(CASE WHEN mes = 10 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_october,
+    SUM(CASE WHEN mes = 11 THEN lecturas ELSE 0 END) AS lecturas_november,
+    SUM(CASE WHEN mes = 11 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_november,
+    SUM(CASE WHEN mes = 11 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_november,
+    SUM(CASE WHEN mes = 12 THEN lecturas ELSE 0 END) AS lecturas_december,
+    SUM(CASE WHEN mes = 12 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_december,
+    SUM(CASE WHEN mes = 12 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_december
+    FROM (
+        SELECT 
+        EXTRACT(MONTH FROM date) AS mes, 
+        L.QR, 
+        R.name, 
+        COUNT(L.function_) AS lecturas,
+        SUM(CASE WHEN L.function_ = 'open' THEN 1 ELSE 0 END) AS lecturas_correctas,
+        SUM(CASE WHEN L.function_ != 'open' THEN 1 ELSE 0 END) AS lecturas_incorrectas
+    FROM 
+        `parkimovil-app`.geosek_raspis.log_sek AS L
+    JOIN 
+        `parkimovil-app`.geosek_raspis.raspis AS R
+        ON L.QR = R.qr
+    WHERE 
+        date >= '2024-01-01 00:00:00'
+    GROUP BY 
+        EXTRACT(MONTH FROM date), L.QR, R.name  
+    ) AS subquery
+    GROUP BY 
+        QR, name
+    ORDER BY 
+        QR"""
+
         df_carriles = client.query(carriles_lecturas).to_dataframe()
         return df_carriles
     except Exception as e:
@@ -82,43 +107,67 @@ st.cache_data(ttl=3600)
 def get_carriles_month_ed(client):
     try:
         carriles_lecturas = """
-        SELECT
+        SELECT 
         QR,
         name,
-        alias,
-        SUM(CASE WHEN mes = 1 THEN lecturas ELSE 0 END) AS lecturas_january,
-        SUM(CASE WHEN mes = 2 THEN lecturas ELSE 0 END) AS lecturas_february,
-        SUM(CASE WHEN mes = 3 THEN lecturas ELSE 0 END) AS lecturas_march,
-        SUM(CASE WHEN mes = 4 THEN lecturas ELSE 0 END) AS lecturas_april,
-        SUM(CASE WHEN mes = 5 THEN lecturas ELSE 0 END) AS lecturas_may,
-        SUM(CASE WHEN mes = 6 THEN lecturas ELSE 0 END) AS lecturas_june,
-        SUM(CASE WHEN mes = 7 THEN lecturas ELSE 0 END) AS lecturas_july,
-        SUM(CASE WHEN mes = 8 THEN lecturas ELSE 0 END) AS lecturas_august,
-        SUM(CASE WHEN mes = 9 THEN lecturas ELSE 0 END) AS lecturas_september,
-        SUM(CASE WHEN mes = 10 THEN lecturas ELSE 0 END) AS lecturas_october,
-        SUM(CASE WHEN mes = 11 THEN lecturas ELSE 0 END) AS lecturas_november,
-        SUM(CASE WHEN mes = 12 THEN lecturas ELSE 0 END) AS lecturas_december
-        FROM (
-        SELECT
-            EXTRACT(MONTH FROM date) AS mes,
-            L.QR,
-            R.name,
-            R.alias,
-            COUNT(L.function_) AS lecturas
-        FROM
-            `parkimovil-app`.geosek_raspis.log AS L
-        JOIN
-            `parkimovil-app`.geosek_raspis.raspis AS R
-            ON L.QR = R.qr
-        WHERE
-            date >= '2024-01-01 00:00:00' AND R.api_active = 1
-        GROUP BY
-            EXTRACT(MONTH FROM date), L.QR, R.name, R.alias
-        ) AS subquery
-        GROUP BY
-            QR, name, alias
-        ORDER BY
-            QR"""
+    SUM(CASE WHEN mes = 1 THEN lecturas ELSE 0 END) AS lecturas_january,
+    SUM(CASE WHEN mes = 1 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_january,
+    SUM(CASE WHEN mes = 1 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_january,
+    SUM(CASE WHEN mes = 2 THEN lecturas ELSE 0 END) AS lecturas_february,
+    SUM(CASE WHEN mes = 2 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_february,
+    SUM(CASE WHEN mes = 2 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_february,
+    SUM(CASE WHEN mes = 3 THEN lecturas ELSE 0 END) AS lecturas_march,
+    SUM(CASE WHEN mes = 3 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_march,
+    SUM(CASE WHEN mes = 3 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_march,
+    SUM(CASE WHEN mes = 4 THEN lecturas ELSE 0 END) AS lecturas_april,
+    SUM(CASE WHEN mes = 4 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_april,
+    SUM(CASE WHEN mes = 4 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_april,
+    SUM(CASE WHEN mes = 5 THEN lecturas ELSE 0 END) AS lecturas_may,
+    SUM(CASE WHEN mes = 5 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_may,
+    SUM(CASE WHEN mes = 5 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_may,
+    SUM(CASE WHEN mes = 6 THEN lecturas ELSE 0 END) AS lecturas_june,
+    SUM(CASE WHEN mes = 6 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_june,
+    SUM(CASE WHEN mes = 6 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_june,
+    SUM(CASE WHEN mes = 7 THEN lecturas ELSE 0 END) AS lecturas_july,
+    SUM(CASE WHEN mes = 7 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_july,
+    SUM(CASE WHEN mes = 7 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_july,
+    SUM(CASE WHEN mes = 8 THEN lecturas ELSE 0 END) AS lecturas_august,
+    SUM(CASE WHEN mes = 8 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_august,
+    SUM(CASE WHEN mes = 8 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_august,
+    SUM(CASE WHEN mes = 9 THEN lecturas ELSE 0 END) AS lecturas_september,
+    SUM(CASE WHEN mes = 9 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_september,
+    SUM(CASE WHEN mes = 9 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_september,
+    SUM(CASE WHEN mes = 10 THEN lecturas ELSE 0 END) AS lecturas_october,
+    SUM(CASE WHEN mes = 10 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_october,
+    SUM(CASE WHEN mes = 10 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_october,
+    SUM(CASE WHEN mes = 11 THEN lecturas ELSE 0 END) AS lecturas_november,
+    SUM(CASE WHEN mes = 11 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_november,
+    SUM(CASE WHEN mes = 11 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_november,
+    SUM(CASE WHEN mes = 12 THEN lecturas ELSE 0 END) AS lecturas_december,
+    SUM(CASE WHEN mes = 12 THEN lecturas_correctas ELSE 0 END) AS lecturas_correctas_december,
+    SUM(CASE WHEN mes = 12 THEN lecturas_incorrectas ELSE 0 END) AS lecturas_incorrectas_december
+FROM (
+    SELECT 
+        EXTRACT(MONTH FROM date) AS mes, 
+        L.QR, 
+        R.name, 
+        COUNT(L.function_) AS lecturas,
+        SUM(CASE WHEN L.function_ = 'open' THEN 1 ELSE 0 END) AS lecturas_correctas,
+        SUM(CASE WHEN L.function_ != 'open' THEN 1 ELSE 0 END) AS lecturas_incorrectas
+    FROM 
+        `parkimovil-app`.geosek_raspis.log_sek AS L
+    JOIN 
+        `parkimovil-app`.geosek_raspis.raspis AS R
+        ON L.QR = R.qr
+    WHERE 
+        date >= '2024-01-01 00:00:00'
+    GROUP BY 
+        EXTRACT(MONTH FROM date), L.QR, R.name
+) AS subquery
+GROUP BY 
+    QR, name
+ORDER BY 
+    QR"""
         df_carriles = client.query(carriles_lecturas).to_dataframe()
         return df_carriles
     except Exception as e:
