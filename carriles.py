@@ -155,7 +155,7 @@ FROM (
         SUM(CASE WHEN L.function_ = 'open' THEN 1 ELSE 0 END) AS lecturas_correctas,
         SUM(CASE WHEN L.function_ != 'open' THEN 1 ELSE 0 END) AS lecturas_incorrectas
     FROM 
-        `parkimovil-app`.geosek_raspis.log_sek AS L
+        `parkimovil-app`.geosek_raspis.log AS L
     JOIN 
         `parkimovil-app`.geosek_raspis.raspis AS R
         ON L.QR = R.qr
