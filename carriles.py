@@ -79,8 +79,8 @@ def get_carriles_month_ca(client):
         L.QR, 
         R.name, 
         COUNT(L.function_) AS lecturas,
-        SUM(CASE WHEN L.function_ = 'open' THEN 1 ELSE 0 END) AS lecturas_correctas,
-        SUM(CASE WHEN L.function_ != 'open' THEN 1 ELSE 0 END) AS lecturas_incorrectas
+        SUM(CASE WHEN L.function_ = 'open' OR L.function_ = 'open_rf' OR L.function_ = 'open_qr' THEN 1 ELSE 0 END) AS lecturas_correctas,
+        SUM(CASE WHEN L.function_ LIKE '%error%' OR L.function_ LIKE '%denied%' THEN 1 ELSE 0 END) AS lecturas_incorrectas
     FROM 
         `parkimovil-app`.geosek_raspis.log_sek AS L
     JOIN 
@@ -152,8 +152,8 @@ FROM (
         L.QR, 
         R.name, 
         COUNT(L.function_) AS lecturas,
-        SUM(CASE WHEN L.function_ = 'open' THEN 1 ELSE 0 END) AS lecturas_correctas,
-        SUM(CASE WHEN L.function_ != 'open' THEN 1 ELSE 0 END) AS lecturas_incorrectas
+        SUM(CASE WHEN L.function_ = 'open' OR L.function_ = 'open_rf' OR L.function_ = 'open_qr' THEN 1 ELSE 0 END) AS lecturas_correctas,
+        SUM(CASE WHEN L.function_ LIKE '%error%' OR L.function_ LIKE '%denied%' THEN 1 ELSE 0 END) AS lecturas_incorrectas
     FROM 
         `parkimovil-app`.geosek_raspis.log AS L
     JOIN 
